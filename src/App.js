@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import './App.css';
 import Board from './components/Board';
 
 function App() {
   const [history, setHistory] = useState([{ squares: Array(9).fill(null) }]);
   const [xIsNext, setXIsNext] = useState(true);
+  console.log(history);
 
   const calculateWinner = squares => {
     const lines = [
@@ -28,7 +30,7 @@ function App() {
   };
 
   const current = history[history.length - 1];
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(current.squares);
 
   let status;
   if (winner) {
@@ -39,19 +41,21 @@ function App() {
 
   const handleClick = i => {
     const newSquares = current.squares.slice();
-    if (calculateWinner(newSquares) || squares[i]) {
+    if (calculateWinner(newSquares) || newSquares[i]) {
       return;
     }
+    newSquares[i] = xIsNext ? 'X' : 'O';
+    setHistory([...history, { squares: newSquares }]);
+    setXIsNext(prev => !prev);
   };
 
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board squares={current.squares} onClick={i => handleClick(i)} />
       </div>
       <div className="game-info">
-        game-info
-        {/*  */}
+        <div className="status">{status}</div>
       </div>
     </div>
   );
